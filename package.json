@@ -16,7 +16,7 @@
 		"spaced-repetition",
 		"reading"
 	],
-	"author": "MatthewHA233",
+	"author": "CHanGO",
 	"license": "MIT",
 	"dependencies": {
 		"sql.js": "^1.14.1"
