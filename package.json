@@ -1,0 +1,33 @@
+{
+	"name": "obsidian-temperature-marker",
+	"version": "0.1.0",
+	"description": "Mark each line with a learning temperature and track understanding over time with a heatmap.",
+	"main": "main.js",
+	"scripts": {
+		"dev": "node esbuild.config.mjs",
+		"build": "node esbuild.config.mjs production",
+		"version": "node version-bump.mjs && git add manifest.json versions.json"
+	},
+	"keywords": [
+		"obsidian",
+		"obsidian-plugin",
+		"learning",
+		"annotation",
+		"spaced-repetition",
+		"reading"
+	],
+	"author": "MatthewHA233",
+	"license": "MIT",
+	"dependencies": {
+		"sql.js": "^1.14.1"
+	},
+	"devDependencies": {
+		"@types/node": "^16.11.6",
+		"@types/sql.js": "^1.4.11",
+		"builtin-modules": "^3.3.0",
+		"esbuild": "0.17.3",
+		"obsidian": "latest",
+		"tslib": "2.4.0",
+		"typescript": "4.7.4"
+	}
+}

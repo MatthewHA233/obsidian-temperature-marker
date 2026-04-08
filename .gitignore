@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Source maps (only in dev builds)
+*.js.map
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Env (for local vault path config)
+.env
