@@ -1,5 +1,6 @@
 import { Plugin, TFile, ItemView, WorkspaceLeaf, MarkdownView, Modal, App, Menu, Editor, Notice, MarkdownRenderer, Component } from 'obsidian';
 import { DatabaseManager, Temperature as Temp } from './database';
+import { t } from './i18n';
 
 const VIEW_TYPE_HISTORY    = 'temperature-history';
 const VIEW_TYPE_VOCAB      = 'vocab-queue';
@@ -390,10 +391,10 @@ export default class TemperatureMarkerPlugin extends Plugin {
     this.registerView(VIEW_TYPE_VOCAB, (leaf) => new VocabQueueView(leaf, this));
 
     // 左侧工具栏：打开全页学习历史
-    this.addRibbonIcon('list-checks', '学习温度记录', () => this.activateFullHistoryView());
+    this.addRibbonIcon('list-checks', t('RIBBON_HISTORY'), () => this.activateFullHistoryView());
 
     // 左侧工具栏：进入/退出词条收集模式
-    this.addRibbonIcon('book-plus', '词条收集模式', () => this.toggleHighlightMode());
+    this.addRibbonIcon('book-plus', t('RIBBON_VOCAB'), () => this.toggleHighlightMode());
 
     // 高亮模式下按 A 键加入清单
     this.registerDomEvent(document, 'keydown', (e: KeyboardEvent) => {
@@ -426,7 +427,7 @@ export default class TemperatureMarkerPlugin extends Plugin {
 
         menu.addItem((item) => {
           item
-            .setTitle(`加入词条清单：${selection}`)
+            .setTitle(t('MENU_ADD_VOCAB', { word: selection }))
             .setIcon('book-plus')
             .onClick(() => this.addToVocabQueue(selection, editor));
         });
@@ -455,12 +456,12 @@ export default class TemperatureMarkerPlugin extends Plugin {
       });
     });
 
-    console.log('Temperature Marker: 已加载');
+    console.log('Temperature Marker: loaded');
   }
 
   async onunload() {
     this.sqlDb?.flushAndClose();
-    console.log('Temperature Marker: 已卸载');
+    console.log('Temperature Marker: unloaded');
   }
 
   // ── 恢复某文件的标记到编辑器 ──
@@ -468,7 +469,7 @@ export default class TemperatureMarkerPlugin extends Plugin {
     const view = this.getEditorView(filePath);
     if (!view) {
       if (attempt < 5) setTimeout(() => this.restoreMarks(filePath, attempt + 1), 200);
-      else console.warn('[TempMarker] restoreMarks: 找不到 EditorView', filePath);
+      else console.warn('[TempMarker] restoreMarks: EditorView not found', filePath);
       return;
     }
     const map = this.sqlDb.getFileMarks(filePath);
@@ -512,7 +513,7 @@ export default class TemperatureMarkerPlugin extends Plugin {
       if (this.vocabQueue.length > 0) {
         this.copyVocabPrompt();
       } else {
-        new Notice('词条清单为空，已退出收集模式');
+        new Notice(t('NOTICE_VOCAB_EMPTY_EXIT'));
       }
       this.exitHighlightMode();
     } else {
@@ -520,7 +521,7 @@ export default class TemperatureMarkerPlugin extends Plugin {
       document.body.classList.add('vocab-highlight-mode');
       this.updateStatusBar();
       this.activateVocabView();
-      new Notice('已进入词条收集模式，选中文字后按 Ctrl+Q 或右键加入清单');
+      new Notice(t('NOTICE_VOCAB_MODE_ON'));
     }
   }
 
@@ -540,20 +541,20 @@ export default class TemperatureMarkerPlugin extends Plugin {
 
     // 去重
     if (this.vocabQueue.some(v => v.word === word)) {
-      new Notice(`「${word}」已在清单中`);
+      new Notice(t('NOTICE_WORD_DUPLICATE', { word }));
       return;
     }
 
     this.vocabQueue.push({
       word,
-      file: file?.path ?? '未知文件',
+      file: file?.path ?? t('UNKNOWN_FILE'),
       line: cursor.line + 1,
       context: lineContent.trim(),
     });
 
     this.updateStatusBar();
     this.refreshVocabPanel();
-    new Notice(`已加入：${word}（共 ${this.vocabQueue.length} 个）`);
+    new Notice(t('NOTICE_WORD_ADDED', { word, count: this.vocabQueue.length }));
   }
 
   // ── 更新状态栏显示 ──
@@ -563,12 +564,12 @@ export default class TemperatureMarkerPlugin extends Plugin {
     this.statusBarEl.empty();
 
     const text = this.statusBarEl.createEl('span', {
-      text: `词条收集：${this.vocabQueue.length} 个`,
+      text: t('STATUS_BAR_COUNT', { count: this.vocabQueue.length }),
       cls: 'vocab-status-text',
     });
 
     const btn = this.statusBarEl.createEl('span', {
-      text: '  结束并复制',
+      text: t('STATUS_BAR_BTN'),
       cls: 'vocab-status-btn',
     });
     btn.addEventListener('click', () => this.toggleHighlightMode());
@@ -581,25 +582,15 @@ export default class TemperatureMarkerPlugin extends Plugin {
     }
 
     const items = this.vocabQueue.map((v, i) =>
-      `【${i + 1}】${v.word}\n来源：${v.file} 第 ${v.line} 行\n上下文：${v.context}`
+      t('VOCAB_PROMPT_ITEM', { index: i + 1, word: v.word, file: v.file, line: v.line, context: v.context })
     ).join('\n\n');
 
-    const prompt =
-`请根据以下生词清单，在笔记仓库的 \`_词汇表/\` 目录下为每个词条创建笔记。
-
-要求：
-1. 自行判断合适的分类（TypeScript概念 / Node.js概念 / React与Ink概念 / 架构模式 / AI与LLM概念 / Claude专有概念 / 或你认为更合适的新分类）
-2. 创建路径：\`_词汇表/{分类}/{词条名}.md\`
-3. 每篇笔记填写：一句话定义、在 Claude Code 里的体现、延伸理解、相关词条
-
-生词清单：
-
-${items}`;
+    const prompt = t('VOCAB_PROMPT_INTRO', { items });
 
     navigator.clipboard.writeText(prompt).then(() => {
-      new Notice(`已复制 ${this.vocabQueue.length} 个词条的 prompt，粘贴给 Claude Code 即可`);
+      new Notice(t('NOTICE_PROMPT_COPIED', { count: this.vocabQueue.length }));
     }).catch(() => {
-      new Notice('复制失败，请手动复制控制台输出');
+      new Notice(t('NOTICE_COPY_FAILED'));
       console.log(prompt);
     });
   }
@@ -894,7 +885,7 @@ class HoverPreview {
     // 标题：文件名 · 行号
     const title = document.createElement('div');
     title.className   = 'thp-title';
-    title.textContent = `${filePath.split('/').pop()?.replace(/\.md$/, '')}  ·  第 ${line} 行`;
+    title.textContent = t('PREVIEW_TITLE', { filename: filePath.split('/').pop()?.replace(/\.md$/, '') ?? '', line });
     this.el.appendChild(title);
 
     // 代码行
@@ -980,11 +971,11 @@ class TempHistoryView extends ItemView {
     const root = this.containerEl.children[1] as HTMLElement;
     root.empty();
     root.addClass('temp-panel');
-    root.createEl('div', { text: '学习温度记录', cls: 'temp-panel-title' });
+    root.createEl('div', { text: t('PANEL_HISTORY_TITLE'), cls: 'temp-panel-title' });
 
     const history = this.plugin.sqlDb.getHistory({ limit: 200 });
     if (history.length === 0) {
-      root.createEl('div', { text: '暂无记录', cls: 'temp-panel-empty' });
+      root.createEl('div', { text: t('PANEL_HISTORY_EMPTY'), cls: 'temp-panel-empty' });
       return;
     }
 
@@ -1048,16 +1039,16 @@ class TempHistoryView extends ItemView {
           }
         }
 
-        const lineText = (lines[entry.line - 1] ?? '').trim() || `第 ${entry.line} 行`;
+        const lineText = (lines[entry.line - 1] ?? '').trim() || t('PREVIEW_TITLE', { filename: shortName, line: entry.line });
         item.createEl('span', { text: lineText, cls: 'temp-panel-loc' });
-        const t = new Date(entry.timestamp).toLocaleTimeString('zh-CN', {
+        const timeStr = new Date(entry.timestamp).toLocaleTimeString(t('DATE_LOCALE'), {
           hour: '2-digit', minute: '2-digit',
         });
-        item.createEl('span', { text: t, cls: 'temp-panel-time' });
+        item.createEl('span', { text: timeStr, cls: 'temp-panel-time' });
         const del = item.createEl('span', { text: '×', cls: 'temp-entry-del' });
         del.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (confirm(`删除此记录并清除该行标记？\n${shortName} · 第 ${entry.line} 行`)) {
+          if (confirm(t('CONFIRM_DELETE', { filename: shortName, line: entry.line }))) {
             this.plugin.deleteHistoryEntry(entry.file, entry.line, entry.timestamp);
             this.render();
           }
@@ -1119,10 +1110,10 @@ class VocabQueueView extends ItemView {
     const activeFile = this.plugin.app.workspace.getActiveFile();
 
     // ── 区域一：当前笔记已关联词条 ──────────────────
-    root.createEl('div', { text: '当前笔记词条', cls: 'vocab-section-title' });
+    root.createEl('div', { text: t('SECTION_LINKED_TERMS'), cls: 'vocab-section-title' });
 
     if (!activeFile) {
-      root.createEl('div', { text: '请先打开一篇笔记', cls: 'vocab-panel-hint' });
+      root.createEl('div', { text: t('HINT_OPEN_NOTE'), cls: 'vocab-panel-hint' });
     } else {
       const linked = this.plugin.sqlDb.getNoteVocab(activeFile.path);
 
@@ -1130,10 +1121,10 @@ class VocabQueueView extends ItemView {
       const addRow = root.createEl('div', { cls: 'vocab-add-row' });
       const input = addRow.createEl('input', {
         type: 'text',
-        placeholder: '搜索已有词条…',
+        placeholder: t('BTN_LINK') + '…',
         cls: 'vocab-add-input',
       });
-      const addBtn = addRow.createEl('button', { text: '关联', cls: 'vocab-add-btn' });
+      const addBtn = addRow.createEl('button', { text: t('BTN_LINK'), cls: 'vocab-add-btn' });
 
       // 输入时过滤已有词条，显示候选列表
       const suggestions = root.createEl('div', { cls: 'vocab-suggestions' });
@@ -1143,8 +1134,8 @@ class VocabQueueView extends ItemView {
         suggestions.empty();
         if (!query) { suggestions.style.display = 'none'; return; }
         const allTerms = [...vocabLinkIndex.termToPath.keys()];
-        const matched = allTerms.filter(t =>
-          t.toLowerCase().includes(query.toLowerCase()) && !linked.includes(t)
+        const matched = allTerms.filter(term =>
+          term.toLowerCase().includes(query.toLowerCase()) && !linked.includes(term)
         ).slice(0, 8);
         if (matched.length === 0) { suggestions.style.display = 'none'; return; }
         suggestions.style.display = '';
@@ -1173,7 +1164,7 @@ class VocabQueueView extends ItemView {
 
       // 已关联词条列表
       if (linked.length === 0) {
-        root.createEl('div', { text: '尚无关联词条', cls: 'vocab-panel-hint' });
+        root.createEl('div', { text: t('HINT_NO_LINKED'), cls: 'vocab-panel-hint' });
       } else {
         const list = root.createEl('div', { cls: 'vocab-linked-list' });
         for (const term of linked) {
@@ -1184,7 +1175,7 @@ class VocabQueueView extends ItemView {
             cls: hasNote ? 'vocab-chip-term' : 'vocab-chip-term vocab-chip-missing',
           });
           if (!hasNote) {
-            chip.createEl('span', { text: ' (无笔记)', cls: 'vocab-chip-warn' });
+            chip.createEl('span', { text: t('VOCAB_NO_NOTE'), cls: 'vocab-chip-warn' });
           }
           const del = chip.createEl('span', { text: '×', cls: 'vocab-card-del' });
           del.addEventListener('click', () => {
@@ -1197,20 +1188,20 @@ class VocabQueueView extends ItemView {
     }
 
     // ── 区域二：收集队列 ──────────────────────────
-    root.createEl('div', { text: '收集队列', cls: 'vocab-section-title vocab-section-gap' });
+    root.createEl('div', { text: t('SECTION_QUEUE'), cls: 'vocab-section-title vocab-section-gap' });
 
     const titleRow = root.createEl('div', { cls: 'vocab-panel-title-row' });
     titleRow.createEl('span', {
-      text: this.plugin.highlightMode ? '收集中' : '未激活',
+      text: this.plugin.highlightMode ? t('TAG_COLLECTING') : t('TAG_INACTIVE'),
       cls: `vocab-mode-tag ${this.plugin.highlightMode ? 'vocab-mode-active' : 'vocab-mode-inactive'}`,
     });
 
     const queue = this.plugin.vocabQueue;
     if (queue.length > 0) {
       const btnRow = root.createEl('div', { cls: 'vocab-panel-btn-row' });
-      const copyBtn = btnRow.createEl('button', { text: '复制 prompt 并结束', cls: 'mod-cta vocab-copy-btn' });
+      const copyBtn = btnRow.createEl('button', { text: t('BTN_COPY_PROMPT'), cls: 'mod-cta vocab-copy-btn' });
       copyBtn.addEventListener('click', () => this.plugin.toggleHighlightMode());
-      const clearBtn = btnRow.createEl('button', { text: '清空', cls: 'vocab-clear-btn' });
+      const clearBtn = btnRow.createEl('button', { text: t('BTN_CLEAR'), cls: 'vocab-clear-btn' });
       clearBtn.addEventListener('click', () => {
         this.plugin.vocabQueue = [];
         this.plugin.updateStatusBar();
@@ -1218,9 +1209,7 @@ class VocabQueueView extends ItemView {
       });
     } else {
       root.createEl('div', {
-        text: this.plugin.highlightMode
-          ? '选中文字后按 Ctrl+Q 或右键加入清单'
-          : '点击左侧书本图标进入收集模式',
+        text: this.plugin.highlightMode ? t('HINT_HOW_TO_COLLECT') : t('HINT_OPEN_NOTE'),
         cls: 'vocab-panel-hint',
       });
     }
@@ -1239,7 +1228,7 @@ class VocabQueueView extends ItemView {
       });
       card.createEl('div', { text: item.context, cls: 'vocab-card-context' });
       const shortFile = item.file.split('/').pop() ?? item.file;
-      card.createEl('div', { text: `${shortFile}  第 ${item.line} 行`, cls: 'vocab-card-source' });
+      card.createEl('div', { text: t('PREVIEW_TITLE', { filename: shortFile, line: item.line }), cls: 'vocab-card-source' });
     }
   }
 }
@@ -1261,7 +1250,7 @@ class FullHistoryView extends ItemView {
   }
 
   getViewType()    { return VIEW_TYPE_HISTORY_FULL; }
-  getDisplayText() { return '学习历史'; }
+  getDisplayText() { return t('PANEL_FULL_TITLE'); }
   getIcon()        { return 'list-checks'; }
 
   async onOpen()  { this.preview = new HoverPreview(this.app); this.render(); }
@@ -1275,7 +1264,7 @@ class FullHistoryView extends ItemView {
     root.addClass('full-history');
 
     // ── 标题 ──
-    root.createEl('h2', { text: '学习历史', cls: 'fh-title' });
+    root.createEl('h2', { text: t('PANEL_FULL_TITLE'), cls: 'fh-title' });
 
     // ── 热力图 ──
     const stats        = this.plugin.sqlDb.getDailyStats();
@@ -1290,10 +1279,10 @@ class FullHistoryView extends ItemView {
 
     const summaryEl = root.createEl('div', { cls: 'fh-summary' });
     const chips: [string, number, string][] = [
-      ['共标记', total, 'fh-chip-total'],
-      ['舒适区', greens, 'fh-chip-green'],
-      ['学习区', oranges, 'fh-chip-orange'],
-      ['恐慌区', reds, 'fh-chip-red'],
+      [t('CHIP_TOTAL'),  total,   'fh-chip-total'],
+      [t('CHIP_GREEN'),  greens,  'fh-chip-green'],
+      [t('CHIP_ORANGE'), oranges, 'fh-chip-orange'],
+      [t('CHIP_RED'),    reds,    'fh-chip-red'],
     ];
     for (const [label, count, cls] of chips) {
       const chip = summaryEl.createEl('div', { cls: `fh-chip ${cls}` });
@@ -1307,9 +1296,11 @@ class FullHistoryView extends ItemView {
     const history  = this.plugin.sqlDb.getHistory({ since: dayStart, until: dayEnd, limit: 1000 });
 
     const today = localDateStr(new Date());
-    const dateLabel = this.selectedDate === today ? '今天' : this.selectedDate;
+    const dateLabel = this.selectedDate === today
+      ? new Date().toLocaleDateString(t('DATE_LOCALE'), { month: 'short', day: 'numeric' })
+      : this.selectedDate;
     root.createEl('div', {
-      text: `${dateLabel}  ·  共 ${history.length} 条`,
+      text: `${dateLabel}  ·  ${history.length}`,
       cls: 'fh-list-title',
     });
 
@@ -1372,17 +1363,17 @@ class FullHistoryView extends ItemView {
           }
         }
 
-        const lineText = (lines[entry.line - 1] ?? '').trim() || `第 ${entry.line} 行`;
+        const lineText = (lines[entry.line - 1] ?? '').trim() || t('PREVIEW_TITLE', { filename: shortName, line: entry.line });
         row.createEl('span', { text: lineText, cls: 'fh-row-loc' });
         const d = new Date(entry.timestamp);
         row.createEl('span', {
-          text: d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+          text: d.toLocaleTimeString(t('DATE_LOCALE'), { hour: '2-digit', minute: '2-digit' }),
           cls: 'fh-row-time',
         });
         const del = row.createEl('span', { text: '×', cls: 'temp-entry-del' });
         del.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (confirm(`删除此记录并清除该行标记？\n${shortName} · 第 ${entry.line} 行`)) {
+          if (confirm(t('CONFIRM_DELETE', { filename: shortName, line: entry.line }))) {
             this.plugin.deleteHistoryEntry(entry.file, entry.line, entry.timestamp);
             this.render();
           }
@@ -1403,8 +1394,8 @@ class FullHistoryView extends ItemView {
 
     // ── 模式切换按钮 ──
     const modeBar = wrap.createEl('div', { cls: 'fh-heatmap-mode-bar' });
-    const btnCount  = modeBar.createEl('button', { text: '记录数量', cls: 'fh-mode-btn' });
-    const btnStatus = modeBar.createEl('button', { text: '当前状态', cls: 'fh-mode-btn' });
+    const btnCount  = modeBar.createEl('button', { text: t('HEATMAP_COUNT'),  cls: 'fh-mode-btn' });
+    const btnStatus = modeBar.createEl('button', { text: t('HEATMAP_STATUS'), cls: 'fh-mode-btn' });
     const setActive = () => {
       btnCount .classList.toggle('fh-mode-btn-active', this.heatmapMode === 'count');
       btnStatus.classList.toggle('fh-mode-btn-active', this.heatmapMode === 'status');
@@ -1457,7 +1448,7 @@ class FullHistoryView extends ItemView {
       if (!firstCell) continue;
       const mo    = parseInt(firstCell.key.slice(5, 7)) - 1;
       const label = new Date(parseInt(firstCell.key.slice(0, 4)), mo, 1)
-        .toLocaleDateString('zh-CN', { month: 'short' });
+        .toLocaleDateString(t('DATE_LOCALE'), { month: 'short' });
       const last  = monthGroups[monthGroups.length - 1];
       if (last && last.label === label) last.weeks.push(w);
       else monthGroups.push({ label, weeks: [w] });

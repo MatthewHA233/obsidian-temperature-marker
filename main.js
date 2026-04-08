@@ -151,7 +151,7 @@ var require_sql_wasm_browser = __commonJS({
             this.pb = {};
             this.Sa = {};
           }
-          var g = y(4), h = k.cwrap, q = h("sqlite3_open", "number", ["string", "number"]), w = h("sqlite3_close_v2", "number", ["number"]), t = h("sqlite3_exec", "number", ["number", "string", "number", "number", "number"]), x = h("sqlite3_changes", "number", ["number"]), D = h(
+          var g = y(4), h = k.cwrap, q = h("sqlite3_open", "number", ["string", "number"]), w = h("sqlite3_close_v2", "number", ["number"]), t2 = h("sqlite3_exec", "number", ["number", "string", "number", "number", "number"]), x = h("sqlite3_changes", "number", ["number"]), D = h(
             "sqlite3_prepare_v2",
             "number",
             ["number", "string", "number", "number", "number"]
@@ -387,7 +387,7 @@ var require_sql_wasm_browser = __commonJS({
                 f.cb();
               }
             } else
-              this.handleError(t(this.db, f, 0, 0, g));
+              this.handleError(t2(this.db, f, 0, 0, g));
             return this;
           };
           e.prototype.exec = function(f, l, n) {
@@ -1546,30 +1546,30 @@ var require_sql_wasm_browser = __commonJS({
             var _a3;
             ((_a3 = c == null ? void 0 : c.buffer) == null ? void 0 : _a3.length) && c(10);
           }, read(g, h, q, w) {
-            for (var t = 0, x = 0; x < w; x++) {
+            for (var t2 = 0, x = 0; x < w; x++) {
               try {
                 var D = b();
               } catch (ib) {
                 throw new N(29);
               }
-              if (void 0 === D && 0 === t)
+              if (void 0 === D && 0 === t2)
                 throw new N(6);
               if (null === D || void 0 === D)
                 break;
-              t++;
+              t2++;
               h[q + x] = D;
             }
-            t && (g.node.$a = Date.now());
-            return t;
+            t2 && (g.node.$a = Date.now());
+            return t2;
           }, write(g, h, q, w) {
-            for (var t = 0; t < w; t++)
+            for (var t2 = 0; t2 < w; t2++)
               try {
-                c(h[q + t]);
+                c(h[q + t2]);
               } catch (x) {
                 throw new N(29);
               }
             w && (g.node.Ua = g.node.Ta = Date.now());
-            return t;
+            return t2;
           } });
           Rb(a, d, e);
         }
@@ -1644,18 +1644,18 @@ var require_sql_wasm_browser = __commonJS({
           }
           return Kc;
         }, Kc, Mc = (a, b, c, d) => {
-          var e = { string: (t) => {
+          var e = { string: (t2) => {
             var x = 0;
-            if (null !== t && void 0 !== t && 0 !== t) {
-              x = gb(t) + 1;
+            if (null !== t2 && void 0 !== t2 && 0 !== t2) {
+              x = gb(t2) + 1;
               var D = y(x);
-              M(t, C, D, x);
+              M(t2, C, D, x);
               x = D;
             }
             return x;
-          }, array: (t) => {
-            var x = y(t.length);
-            m.set(t, x);
+          }, array: (t2) => {
+            var x = y(t2.length);
+            m.set(t2, x);
             return x;
           } };
           a = k["_" + a];
@@ -1666,9 +1666,9 @@ var require_sql_wasm_browser = __commonJS({
               w ? (0 === h && (h = oa()), g[q] = w(d[q])) : g[q] = d[q];
             }
           c = a(...g);
-          return c = function(t) {
+          return c = function(t2) {
             0 !== h && qa(h);
-            return "string" === b ? z(t) : "boolean" === b ? !!t : t;
+            return "string" === b ? z(t2) : "boolean" === b ? !!t2 : t2;
           }(c);
         }, ea = (a) => {
           var b = gb(a) + 1, c = ca(b);
@@ -2020,10 +2020,10 @@ var require_sql_wasm_browser = __commonJS({
                 Lb(w.La.Xa)(w, { $a: a, Ua: g });
               }
               return 0;
-            } catch (t) {
-              if ("undefined" == typeof X || "ErrnoError" !== t.name)
-                throw t;
-              return -t.Pa;
+            } catch (t2) {
+              if ("undefined" == typeof X || "ErrnoError" !== t2.name)
+                throw t2;
+              return -t2.Pa;
             }
           },
           m: () => Ja(""),
@@ -2061,9 +2061,9 @@ var require_sql_wasm_browser = __commonJS({
               if (!a)
                 throw new N(28);
               var w = q.Ma.sb(q, a, e, b, c);
-              var t = w.tc;
+              var t2 = w.tc;
               E[g >> 2] = w.Ub;
-              F[h >> 2] = t;
+              F[h >> 2] = t2;
               return 0;
             } catch (x) {
               if ("undefined" == typeof X || "ErrnoError" !== x.name)
@@ -2189,15 +2189,15 @@ var require_sql_wasm_browser = __commonJS({
                 for (var g, h = b = 0; h < c; h++) {
                   var q = F[a >> 2], w = F[a + 4 >> 2];
                   a += 8;
-                  var t = Yb(e, m, q, w, g);
-                  if (0 > t) {
+                  var t2 = Yb(e, m, q, w, g);
+                  if (0 > t2) {
                     var x = -1;
                     break a;
                   }
-                  b += t;
-                  if (t < w)
+                  b += t2;
+                  if (t2 < w)
                     break;
-                  "undefined" != typeof g && (g += t);
+                  "undefined" != typeof g && (g += t2);
                 }
                 x = b;
               }
@@ -2244,15 +2244,15 @@ var require_sql_wasm_browser = __commonJS({
                 for (var g, h = b = 0; h < c; h++) {
                   var q = F[a >> 2], w = F[a + 4 >> 2];
                   a += 8;
-                  var t = ma(e, m, q, w, g);
-                  if (0 > t) {
+                  var t2 = ma(e, m, q, w, g);
+                  if (0 > t2) {
                     var x = -1;
                     break a;
                   }
-                  b += t;
-                  if (t < w)
+                  b += t2;
+                  if (t2 < w)
                     break;
-                  "undefined" != typeof g && (g += t);
+                  "undefined" != typeof g && (g += t2);
                 }
                 x = b;
               }
@@ -2598,9 +2598,9 @@ var DatabaseManager = class {
       const row = stmt.getAsObject();
       stmt.free();
       if (row.t != null) {
-        const t = row.t;
-        if (earliest === null || t < earliest)
-          earliest = t;
+        const t2 = row.t;
+        if (earliest === null || t2 < earliest)
+          earliest = t2;
       }
     }
     return earliest;
@@ -2732,6 +2732,158 @@ var DatabaseManager = class {
   }
 };
 
+// lang/en.ts
+var en = {
+  // Ribbon
+  RIBBON_HISTORY: "Learning History",
+  RIBBON_VOCAB: "Vocabulary Collection",
+  // Context menu
+  MENU_ADD_VOCAB: "Add to vocab queue: {word}",
+  // Notices
+  NOTICE_VOCAB_EMPTY_EXIT: "Vocab queue is empty. Exited collection mode.",
+  NOTICE_VOCAB_MODE_ON: "Vocab collection mode: select text, then Ctrl+Q or right-click to add.",
+  NOTICE_WORD_DUPLICATE: '"{word}" is already in the queue.',
+  NOTICE_WORD_ADDED: "Added: {word} ({count} total)",
+  NOTICE_PROMPT_COPIED: "Copied prompt for {count} term(s). Paste to Claude Code.",
+  NOTICE_COPY_FAILED: "Copy failed. Check the console for the prompt.",
+  // Status bar
+  STATUS_BAR_COUNT: "Vocab: {count}",
+  STATUS_BAR_BTN: "Finish & copy",
+  // Unknown file fallback
+  UNKNOWN_FILE: "unknown file",
+  // Vocab prompt template (AI-facing, adjust categories to match your vault)
+  VOCAB_PROMPT_INTRO: `Please create a vocabulary note for each term listed below under the \`_glossary/\` directory in the vault.
+
+Instructions:
+1. Choose an appropriate category (TypeScript / Node.js / React & Ink / Architecture Patterns / AI & LLM / Claude-specific / or a new category you deem appropriate)
+2. Create path: \`_glossary/{category}/{term}.md\`
+3. Each note should include: one-line definition, how it appears in Claude Code, extended understanding, related terms
+
+Term list:
+
+{items}`,
+  VOCAB_PROMPT_ITEM: "[{index}] {word}\nSource: {file} line {line}\nContext: {context}",
+  // History sidebar panel
+  PANEL_HISTORY_TITLE: "Learning History",
+  PANEL_HISTORY_EMPTY: "No records yet.",
+  // Full history panel
+  PANEL_FULL_TITLE: "Learning History",
+  PANEL_FULL_LIST_TITLE: "History",
+  CHIP_TOTAL: "Total",
+  CHIP_GREEN: "Comfort",
+  CHIP_ORANGE: "Learning",
+  CHIP_RED: "Panic",
+  HEATMAP_COUNT: "Count",
+  HEATMAP_STATUS: "Status",
+  // Vocab panel
+  SECTION_LINKED_TERMS: "Terms in this note",
+  SECTION_QUEUE: "Collection queue",
+  HINT_OPEN_NOTE: "Open a note to see its linked terms.",
+  HINT_NO_LINKED: "No linked terms.",
+  HINT_HOW_TO_COLLECT: "Select text, then Ctrl+Q or right-click to add.",
+  BTN_LINK: "Link",
+  BTN_COPY_PROMPT: "Copy prompt & finish",
+  BTN_CLEAR: "Clear",
+  TAG_COLLECTING: "Collecting",
+  TAG_INACTIVE: "Inactive",
+  VOCAB_NO_NOTE: "(no note)",
+  // Delete confirmation
+  CONFIRM_DELETE: "Delete this record and clear the mark?\n{filename} \xB7 Line {line}",
+  // Hover preview
+  PREVIEW_TITLE: "{filename}  \xB7  Line {line}",
+  // Date / time locale string passed to toLocaleTimeString / toLocaleDateString
+  DATE_LOCALE: "en-US"
+};
+var en_default = en;
+
+// lang/zh.ts
+var zh = {
+  // Ribbon
+  RIBBON_HISTORY: "\u5B66\u4E60\u6E29\u5EA6\u8BB0\u5F55",
+  RIBBON_VOCAB: "\u8BCD\u6761\u6536\u96C6\u6A21\u5F0F",
+  // Context menu
+  MENU_ADD_VOCAB: "\u52A0\u5165\u8BCD\u6761\u6E05\u5355\uFF1A{word}",
+  // Notices
+  NOTICE_VOCAB_EMPTY_EXIT: "\u8BCD\u6761\u6E05\u5355\u4E3A\u7A7A\uFF0C\u5DF2\u9000\u51FA\u6536\u96C6\u6A21\u5F0F",
+  NOTICE_VOCAB_MODE_ON: "\u5DF2\u8FDB\u5165\u8BCD\u6761\u6536\u96C6\u6A21\u5F0F\uFF0C\u9009\u4E2D\u6587\u5B57\u540E\u6309 Ctrl+Q \u6216\u53F3\u952E\u52A0\u5165\u6E05\u5355",
+  NOTICE_WORD_DUPLICATE: "\u300C{word}\u300D\u5DF2\u5728\u6E05\u5355\u4E2D",
+  NOTICE_WORD_ADDED: "\u5DF2\u52A0\u5165\uFF1A{word}\uFF08\u5171 {count} \u4E2A\uFF09",
+  NOTICE_PROMPT_COPIED: "\u5DF2\u590D\u5236 {count} \u4E2A\u8BCD\u6761\u7684 prompt\uFF0C\u7C98\u8D34\u7ED9 Claude Code \u5373\u53EF",
+  NOTICE_COPY_FAILED: "\u590D\u5236\u5931\u8D25\uFF0C\u8BF7\u624B\u52A8\u590D\u5236\u63A7\u5236\u53F0\u8F93\u51FA",
+  // Status bar
+  STATUS_BAR_COUNT: "\u8BCD\u6761\u6536\u96C6\uFF1A{count} \u4E2A",
+  STATUS_BAR_BTN: "  \u7ED3\u675F\u5E76\u590D\u5236",
+  // Unknown file fallback
+  UNKNOWN_FILE: "\u672A\u77E5\u6587\u4EF6",
+  // Vocab prompt template
+  VOCAB_PROMPT_INTRO: `\u8BF7\u6839\u636E\u4EE5\u4E0B\u751F\u8BCD\u6E05\u5355\uFF0C\u5728\u7B14\u8BB0\u4ED3\u5E93\u7684 \`_\u8BCD\u6C47\u8868/\` \u76EE\u5F55\u4E0B\u4E3A\u6BCF\u4E2A\u8BCD\u6761\u521B\u5EFA\u7B14\u8BB0\u3002
+
+\u8981\u6C42\uFF1A
+1. \u81EA\u884C\u5224\u65AD\u5408\u9002\u7684\u5206\u7C7B\uFF08TypeScript\u6982\u5FF5 / Node.js\u6982\u5FF5 / React\u4E0EInk\u6982\u5FF5 / \u67B6\u6784\u6A21\u5F0F / AI\u4E0ELLM\u6982\u5FF5 / Claude\u4E13\u6709\u6982\u5FF5 / \u6216\u4F60\u8BA4\u4E3A\u66F4\u5408\u9002\u7684\u65B0\u5206\u7C7B\uFF09
+2. \u521B\u5EFA\u8DEF\u5F84\uFF1A\`_\u8BCD\u6C47\u8868/{\u5206\u7C7B}/{\u8BCD\u6761\u540D}.md\`
+3. \u6BCF\u7BC7\u7B14\u8BB0\u586B\u5199\uFF1A\u4E00\u53E5\u8BDD\u5B9A\u4E49\u3001\u5728 Claude Code \u91CC\u7684\u4F53\u73B0\u3001\u5EF6\u4F38\u7406\u89E3\u3001\u76F8\u5173\u8BCD\u6761
+
+\u751F\u8BCD\u6E05\u5355\uFF1A
+
+{items}`,
+  VOCAB_PROMPT_ITEM: "\u3010{index}\u3011{word}\n\u6765\u6E90\uFF1A{file} \u7B2C {line} \u884C\n\u4E0A\u4E0B\u6587\uFF1A{context}",
+  // History sidebar panel
+  PANEL_HISTORY_TITLE: "\u5B66\u4E60\u6E29\u5EA6\u8BB0\u5F55",
+  PANEL_HISTORY_EMPTY: "\u6682\u65E0\u8BB0\u5F55",
+  // Full history panel
+  PANEL_FULL_TITLE: "\u5B66\u4E60\u5386\u53F2",
+  PANEL_FULL_LIST_TITLE: "\u5386\u53F2\u8BB0\u5F55",
+  CHIP_TOTAL: "\u5171\u6807\u8BB0",
+  CHIP_GREEN: "\u8212\u9002\u533A",
+  CHIP_ORANGE: "\u5B66\u4E60\u533A",
+  CHIP_RED: "\u6050\u614C\u533A",
+  HEATMAP_COUNT: "\u8BB0\u5F55\u6570\u91CF",
+  HEATMAP_STATUS: "\u5F53\u524D\u72B6\u6001",
+  // Vocab panel
+  SECTION_LINKED_TERMS: "\u5F53\u524D\u7B14\u8BB0\u8BCD\u6761",
+  SECTION_QUEUE: "\u6536\u96C6\u961F\u5217",
+  HINT_OPEN_NOTE: "\u8BF7\u5148\u6253\u5F00\u4E00\u7BC7\u7B14\u8BB0",
+  HINT_NO_LINKED: "\u5C1A\u65E0\u5173\u8054\u8BCD\u6761",
+  HINT_HOW_TO_COLLECT: "\u9009\u4E2D\u6587\u5B57\u540E\u6309 Ctrl+Q \u6216\u53F3\u952E\u52A0\u5165\u6E05\u5355",
+  BTN_LINK: "\u5173\u8054",
+  BTN_COPY_PROMPT: "\u590D\u5236 prompt \u5E76\u7ED3\u675F",
+  BTN_CLEAR: "\u6E05\u7A7A",
+  TAG_COLLECTING: "\u6536\u96C6\u4E2D",
+  TAG_INACTIVE: "\u672A\u6FC0\u6D3B",
+  VOCAB_NO_NOTE: "(\u65E0\u7B14\u8BB0)",
+  // Delete confirmation
+  CONFIRM_DELETE: "\u5220\u9664\u6B64\u8BB0\u5F55\u5E76\u6E05\u9664\u8BE5\u884C\u6807\u8BB0\uFF1F\n{filename} \xB7 \u7B2C {line} \u884C",
+  // Hover preview
+  PREVIEW_TITLE: "{filename}  \xB7  \u7B2C {line} \u884C",
+  // Date / time locale
+  DATE_LOCALE: "zh-CN"
+};
+var zh_default = zh;
+
+// i18n.ts
+var locales = {
+  en: en_default,
+  zh: zh_default,
+  "zh-cn": zh_default,
+  "zh-tw": zh_default
+};
+function getLocale() {
+  var _a, _b, _c, _d;
+  return (_d = (_c = (_b = (_a = window.moment) == null ? void 0 : _a.locale) == null ? void 0 : _b.call(_a)) == null ? void 0 : _c.toLowerCase()) != null ? _d : "en";
+}
+function t(key, params) {
+  var _a, _b;
+  const locale = getLocale();
+  const dict = (_a = locales[locale]) != null ? _a : en_default;
+  let str = (_b = dict[key]) != null ? _b : en_default[key];
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      str = str.replace(`{${k}}`, String(v));
+    }
+  }
+  return str;
+}
+
 // main.ts
 var import_view = require("@codemirror/view");
 var import_state = require("@codemirror/state");
@@ -2774,10 +2926,10 @@ var VocabLinkIndex = class {
       return;
     }
     const terms = [...this.termToPath.keys()].sort((a, b) => b.length - a.length);
-    const patterns = terms.map((t) => {
-      const esc = t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const left = /^\w/.test(t) ? "\\b" : "";
-      const right = /\w$/.test(t) ? "\\b" : "";
+    const patterns = terms.map((t2) => {
+      const esc = t2.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const left = /^\w/.test(t2) ? "\\b" : "";
+      const right = /\w$/.test(t2) ? "\\b" : "";
       return `${left}${esc}${right}`;
     });
     this._regex = new RegExp(`(${patterns.join("|")})`, "g");
@@ -2925,10 +3077,10 @@ function buildVocabDecorations(view) {
   if (termMap.size === 0)
     return import_view.Decoration.none;
   const terms = [...termMap.keys()].sort((a, b) => b.length - a.length);
-  const patterns = terms.map((t) => {
-    const esc = t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const left = /^\w/.test(t) ? "\\b" : "";
-    const right = /\w$/.test(t) ? "\\b" : "";
+  const patterns = terms.map((t2) => {
+    const esc = t2.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const left = /^\w/.test(t2) ? "\\b" : "";
+    const right = /\w$/.test(t2) ? "\\b" : "";
     return `${left}${esc}${right}`;
   });
   const regex = new RegExp(`(${patterns.join("|")})`, "g");
@@ -3002,8 +3154,8 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
     this.registerView(VIEW_TYPE_HISTORY_FULL, (leaf) => new FullHistoryView(leaf, this));
     this.registerView(VIEW_TYPE_HISTORY, (leaf) => new TempHistoryView(leaf, this));
     this.registerView(VIEW_TYPE_VOCAB, (leaf) => new VocabQueueView(leaf, this));
-    this.addRibbonIcon("list-checks", "\u5B66\u4E60\u6E29\u5EA6\u8BB0\u5F55", () => this.activateFullHistoryView());
-    this.addRibbonIcon("book-plus", "\u8BCD\u6761\u6536\u96C6\u6A21\u5F0F", () => this.toggleHighlightMode());
+    this.addRibbonIcon("list-checks", t("RIBBON_HISTORY"), () => this.activateFullHistoryView());
+    this.addRibbonIcon("book-plus", t("RIBBON_VOCAB"), () => this.toggleHighlightMode());
     this.registerDomEvent(document, "keydown", (e) => {
       if (!this.highlightMode)
         return;
@@ -3031,7 +3183,7 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
         if (!selection)
           return;
         menu.addItem((item) => {
-          item.setTitle(`\u52A0\u5165\u8BCD\u6761\u6E05\u5355\uFF1A${selection}`).setIcon("book-plus").onClick(() => this.addToVocabQueue(selection, editor));
+          item.setTitle(t("MENU_ADD_VOCAB", { word: selection })).setIcon("book-plus").onClick(() => this.addToVocabQueue(selection, editor));
         });
       })
     );
@@ -3054,12 +3206,12 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
           this._dispatchNoteVocabTerms(file.path);
         });
     });
-    console.log("Temperature Marker: \u5DF2\u52A0\u8F7D");
+    console.log("Temperature Marker: loaded");
   }
   async onunload() {
     var _a;
     (_a = this.sqlDb) == null ? void 0 : _a.flushAndClose();
-    console.log("Temperature Marker: \u5DF2\u5378\u8F7D");
+    console.log("Temperature Marker: unloaded");
   }
   // ── 恢复某文件的标记到编辑器 ──
   restoreMarks(filePath, attempt = 0) {
@@ -3068,7 +3220,7 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
       if (attempt < 5)
         setTimeout(() => this.restoreMarks(filePath, attempt + 1), 200);
       else
-        console.warn("[TempMarker] restoreMarks: \u627E\u4E0D\u5230 EditorView", filePath);
+        console.warn("[TempMarker] restoreMarks: EditorView not found", filePath);
       return;
     }
     const map = this.sqlDb.getFileMarks(filePath);
@@ -3112,7 +3264,7 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
       if (this.vocabQueue.length > 0) {
         this.copyVocabPrompt();
       } else {
-        new import_obsidian.Notice("\u8BCD\u6761\u6E05\u5355\u4E3A\u7A7A\uFF0C\u5DF2\u9000\u51FA\u6536\u96C6\u6A21\u5F0F");
+        new import_obsidian.Notice(t("NOTICE_VOCAB_EMPTY_EXIT"));
       }
       this.exitHighlightMode();
     } else {
@@ -3120,7 +3272,7 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
       document.body.classList.add("vocab-highlight-mode");
       this.updateStatusBar();
       this.activateVocabView();
-      new import_obsidian.Notice("\u5DF2\u8FDB\u5165\u8BCD\u6761\u6536\u96C6\u6A21\u5F0F\uFF0C\u9009\u4E2D\u6587\u5B57\u540E\u6309 Ctrl+Q \u6216\u53F3\u952E\u52A0\u5165\u6E05\u5355");
+      new import_obsidian.Notice(t("NOTICE_VOCAB_MODE_ON"));
     }
   }
   exitHighlightMode() {
@@ -3138,18 +3290,18 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
     const lineContent = editor.getLine(cursor.line);
     const file = this.app.workspace.getActiveFile();
     if (this.vocabQueue.some((v) => v.word === word)) {
-      new import_obsidian.Notice(`\u300C${word}\u300D\u5DF2\u5728\u6E05\u5355\u4E2D`);
+      new import_obsidian.Notice(t("NOTICE_WORD_DUPLICATE", { word }));
       return;
     }
     this.vocabQueue.push({
       word,
-      file: (_a = file == null ? void 0 : file.path) != null ? _a : "\u672A\u77E5\u6587\u4EF6",
+      file: (_a = file == null ? void 0 : file.path) != null ? _a : t("UNKNOWN_FILE"),
       line: cursor.line + 1,
       context: lineContent.trim()
     });
     this.updateStatusBar();
     this.refreshVocabPanel();
-    new import_obsidian.Notice(`\u5DF2\u52A0\u5165\uFF1A${word}\uFF08\u5171 ${this.vocabQueue.length} \u4E2A\uFF09`);
+    new import_obsidian.Notice(t("NOTICE_WORD_ADDED", { word, count: this.vocabQueue.length }));
   }
   // ── 更新状态栏显示 ──
   updateStatusBar() {
@@ -3158,11 +3310,11 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
     this.statusBarEl.style.display = "";
     this.statusBarEl.empty();
     const text = this.statusBarEl.createEl("span", {
-      text: `\u8BCD\u6761\u6536\u96C6\uFF1A${this.vocabQueue.length} \u4E2A`,
+      text: t("STATUS_BAR_COUNT", { count: this.vocabQueue.length }),
       cls: "vocab-status-text"
     });
     const btn = this.statusBarEl.createEl("span", {
-      text: "  \u7ED3\u675F\u5E76\u590D\u5236",
+      text: t("STATUS_BAR_BTN"),
       cls: "vocab-status-btn"
     });
     btn.addEventListener("click", () => this.toggleHighlightMode());
@@ -3173,24 +3325,13 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
       this.sqlDb.addNoteVocab(item.file, item.word);
     }
     const items = this.vocabQueue.map(
-      (v, i) => `\u3010${i + 1}\u3011${v.word}
-\u6765\u6E90\uFF1A${v.file} \u7B2C ${v.line} \u884C
-\u4E0A\u4E0B\u6587\uFF1A${v.context}`
+      (v, i) => t("VOCAB_PROMPT_ITEM", { index: i + 1, word: v.word, file: v.file, line: v.line, context: v.context })
     ).join("\n\n");
-    const prompt = `\u8BF7\u6839\u636E\u4EE5\u4E0B\u751F\u8BCD\u6E05\u5355\uFF0C\u5728\u7B14\u8BB0\u4ED3\u5E93\u7684 \`_\u8BCD\u6C47\u8868/\` \u76EE\u5F55\u4E0B\u4E3A\u6BCF\u4E2A\u8BCD\u6761\u521B\u5EFA\u7B14\u8BB0\u3002
-
-\u8981\u6C42\uFF1A
-1. \u81EA\u884C\u5224\u65AD\u5408\u9002\u7684\u5206\u7C7B\uFF08TypeScript\u6982\u5FF5 / Node.js\u6982\u5FF5 / React\u4E0EInk\u6982\u5FF5 / \u67B6\u6784\u6A21\u5F0F / AI\u4E0ELLM\u6982\u5FF5 / Claude\u4E13\u6709\u6982\u5FF5 / \u6216\u4F60\u8BA4\u4E3A\u66F4\u5408\u9002\u7684\u65B0\u5206\u7C7B\uFF09
-2. \u521B\u5EFA\u8DEF\u5F84\uFF1A\`_\u8BCD\u6C47\u8868/{\u5206\u7C7B}/{\u8BCD\u6761\u540D}.md\`
-3. \u6BCF\u7BC7\u7B14\u8BB0\u586B\u5199\uFF1A\u4E00\u53E5\u8BDD\u5B9A\u4E49\u3001\u5728 Claude Code \u91CC\u7684\u4F53\u73B0\u3001\u5EF6\u4F38\u7406\u89E3\u3001\u76F8\u5173\u8BCD\u6761
-
-\u751F\u8BCD\u6E05\u5355\uFF1A
-
-${items}`;
+    const prompt = t("VOCAB_PROMPT_INTRO", { items });
     navigator.clipboard.writeText(prompt).then(() => {
-      new import_obsidian.Notice(`\u5DF2\u590D\u5236 ${this.vocabQueue.length} \u4E2A\u8BCD\u6761\u7684 prompt\uFF0C\u7C98\u8D34\u7ED9 Claude Code \u5373\u53EF`);
+      new import_obsidian.Notice(t("NOTICE_PROMPT_COPIED", { count: this.vocabQueue.length }));
     }).catch(() => {
-      new import_obsidian.Notice("\u590D\u5236\u5931\u8D25\uFF0C\u8BF7\u624B\u52A8\u590D\u5236\u63A7\u5236\u53F0\u8F93\u51FA");
+      new import_obsidian.Notice(t("NOTICE_COPY_FAILED"));
       console.log(prompt);
     });
   }
@@ -3289,7 +3430,7 @@ ${items}`;
           this.decorations = buildVocabDecorations(view);
         }
         update(update) {
-          const needsRebuild = update.docChanged || update.viewportChanged || update.transactions.some((t) => t.effects.some((e) => e.is(setNoteVocabTerms)));
+          const needsRebuild = update.docChanged || update.viewportChanged || update.transactions.some((t2) => t2.effects.some((e) => e.is(setNoteVocabTerms)));
           if (needsRebuild) {
             this.decorations = buildVocabDecorations(update.view);
           }
@@ -3413,7 +3554,7 @@ var HoverPreview = class {
     this.el.addEventListener("mouseleave", () => this.hide());
   }
   async show(mouseX, mouseY, filePath, line) {
-    var _a, _b;
+    var _a, _b, _c;
     this._cancelHide();
     const tfile = this.app.vault.getAbstractFileByPath(filePath);
     if (!(tfile instanceof import_obsidian.TFile))
@@ -3430,7 +3571,7 @@ var HoverPreview = class {
     this.el.innerHTML = "";
     const title = document.createElement("div");
     title.className = "thp-title";
-    title.textContent = `${(_a = filePath.split("/").pop()) == null ? void 0 : _a.replace(/\.md$/, "")}  \xB7  \u7B2C ${line} \u884C`;
+    title.textContent = t("PREVIEW_TITLE", { filename: (_b = (_a = filePath.split("/").pop()) == null ? void 0 : _a.replace(/\.md$/, "")) != null ? _b : "", line });
     this.el.appendChild(title);
     const body = document.createElement("div");
     body.className = "thp-lines";
@@ -3442,7 +3583,7 @@ var HoverPreview = class {
       num.textContent = String(i + 1);
       const txt = document.createElement("span");
       txt.className = "thp-linetext";
-      txt.textContent = (_b = lines[i]) != null ? _b : "";
+      txt.textContent = (_c = lines[i]) != null ? _c : "";
       row.appendChild(num);
       row.appendChild(txt);
       body.appendChild(row);
@@ -3515,10 +3656,10 @@ var TempHistoryView = class extends import_obsidian.ItemView {
     const root = this.containerEl.children[1];
     root.empty();
     root.addClass("temp-panel");
-    root.createEl("div", { text: "\u5B66\u4E60\u6E29\u5EA6\u8BB0\u5F55", cls: "temp-panel-title" });
+    root.createEl("div", { text: t("PANEL_HISTORY_TITLE"), cls: "temp-panel-title" });
     const history = this.plugin.sqlDb.getHistory({ limit: 200 });
     if (history.length === 0) {
-      root.createEl("div", { text: "\u6682\u65E0\u8BB0\u5F55", cls: "temp-panel-empty" });
+      root.createEl("div", { text: t("PANEL_HISTORY_EMPTY"), cls: "temp-panel-empty" });
       return;
     }
     const allCurrentMarks = this.plugin.sqlDb.getAllCurrentMarks();
@@ -3571,18 +3712,17 @@ var TempHistoryView = class extends import_obsidian.ItemView {
             dotWrap.createEl("span", { cls: "temp-panel-dot fh-dot-cleared" });
           }
         }
-        const lineText = ((_d = lines[entry.line - 1]) != null ? _d : "").trim() || `\u7B2C ${entry.line} \u884C`;
+        const lineText = ((_d = lines[entry.line - 1]) != null ? _d : "").trim() || t("PREVIEW_TITLE", { filename: shortName, line: entry.line });
         item.createEl("span", { text: lineText, cls: "temp-panel-loc" });
-        const t = new Date(entry.timestamp).toLocaleTimeString("zh-CN", {
+        const timeStr = new Date(entry.timestamp).toLocaleTimeString(t("DATE_LOCALE"), {
           hour: "2-digit",
           minute: "2-digit"
         });
-        item.createEl("span", { text: t, cls: "temp-panel-time" });
+        item.createEl("span", { text: timeStr, cls: "temp-panel-time" });
         const del = item.createEl("span", { text: "\xD7", cls: "temp-entry-del" });
         del.addEventListener("click", (e) => {
           e.stopPropagation();
-          if (confirm(`\u5220\u9664\u6B64\u8BB0\u5F55\u5E76\u6E05\u9664\u8BE5\u884C\u6807\u8BB0\uFF1F
-${shortName} \xB7 \u7B2C ${entry.line} \u884C`)) {
+          if (confirm(t("CONFIRM_DELETE", { filename: shortName, line: entry.line }))) {
             this.plugin.deleteHistoryEntry(entry.file, entry.line, entry.timestamp);
             this.render();
           }
@@ -3642,18 +3782,18 @@ var VocabQueueView = class extends import_obsidian.ItemView {
     root.empty();
     root.addClass("vocab-panel");
     const activeFile = this.plugin.app.workspace.getActiveFile();
-    root.createEl("div", { text: "\u5F53\u524D\u7B14\u8BB0\u8BCD\u6761", cls: "vocab-section-title" });
+    root.createEl("div", { text: t("SECTION_LINKED_TERMS"), cls: "vocab-section-title" });
     if (!activeFile) {
-      root.createEl("div", { text: "\u8BF7\u5148\u6253\u5F00\u4E00\u7BC7\u7B14\u8BB0", cls: "vocab-panel-hint" });
+      root.createEl("div", { text: t("HINT_OPEN_NOTE"), cls: "vocab-panel-hint" });
     } else {
       const linked = this.plugin.sqlDb.getNoteVocab(activeFile.path);
       const addRow = root.createEl("div", { cls: "vocab-add-row" });
       const input = addRow.createEl("input", {
         type: "text",
-        placeholder: "\u641C\u7D22\u5DF2\u6709\u8BCD\u6761\u2026",
+        placeholder: t("BTN_LINK") + "\u2026",
         cls: "vocab-add-input"
       });
-      const addBtn = addRow.createEl("button", { text: "\u5173\u8054", cls: "vocab-add-btn" });
+      const addBtn = addRow.createEl("button", { text: t("BTN_LINK"), cls: "vocab-add-btn" });
       const suggestions = root.createEl("div", { cls: "vocab-suggestions" });
       suggestions.style.display = "none";
       const refreshSuggestions = (query) => {
@@ -3664,7 +3804,7 @@ var VocabQueueView = class extends import_obsidian.ItemView {
         }
         const allTerms = [...vocabLinkIndex.termToPath.keys()];
         const matched = allTerms.filter(
-          (t) => t.toLowerCase().includes(query.toLowerCase()) && !linked.includes(t)
+          (term) => term.toLowerCase().includes(query.toLowerCase()) && !linked.includes(term)
         ).slice(0, 8);
         if (matched.length === 0) {
           suggestions.style.display = "none";
@@ -3696,7 +3836,7 @@ var VocabQueueView = class extends import_obsidian.ItemView {
           doAdd();
       });
       if (linked.length === 0) {
-        root.createEl("div", { text: "\u5C1A\u65E0\u5173\u8054\u8BCD\u6761", cls: "vocab-panel-hint" });
+        root.createEl("div", { text: t("HINT_NO_LINKED"), cls: "vocab-panel-hint" });
       } else {
         const list = root.createEl("div", { cls: "vocab-linked-list" });
         for (const term of linked) {
@@ -3707,7 +3847,7 @@ var VocabQueueView = class extends import_obsidian.ItemView {
             cls: hasNote ? "vocab-chip-term" : "vocab-chip-term vocab-chip-missing"
           });
           if (!hasNote) {
-            chip.createEl("span", { text: " (\u65E0\u7B14\u8BB0)", cls: "vocab-chip-warn" });
+            chip.createEl("span", { text: t("VOCAB_NO_NOTE"), cls: "vocab-chip-warn" });
           }
           const del = chip.createEl("span", { text: "\xD7", cls: "vocab-card-del" });
           del.addEventListener("click", () => {
@@ -3718,18 +3858,18 @@ var VocabQueueView = class extends import_obsidian.ItemView {
         }
       }
     }
-    root.createEl("div", { text: "\u6536\u96C6\u961F\u5217", cls: "vocab-section-title vocab-section-gap" });
+    root.createEl("div", { text: t("SECTION_QUEUE"), cls: "vocab-section-title vocab-section-gap" });
     const titleRow = root.createEl("div", { cls: "vocab-panel-title-row" });
     titleRow.createEl("span", {
-      text: this.plugin.highlightMode ? "\u6536\u96C6\u4E2D" : "\u672A\u6FC0\u6D3B",
+      text: this.plugin.highlightMode ? t("TAG_COLLECTING") : t("TAG_INACTIVE"),
       cls: `vocab-mode-tag ${this.plugin.highlightMode ? "vocab-mode-active" : "vocab-mode-inactive"}`
     });
     const queue = this.plugin.vocabQueue;
     if (queue.length > 0) {
       const btnRow = root.createEl("div", { cls: "vocab-panel-btn-row" });
-      const copyBtn = btnRow.createEl("button", { text: "\u590D\u5236 prompt \u5E76\u7ED3\u675F", cls: "mod-cta vocab-copy-btn" });
+      const copyBtn = btnRow.createEl("button", { text: t("BTN_COPY_PROMPT"), cls: "mod-cta vocab-copy-btn" });
       copyBtn.addEventListener("click", () => this.plugin.toggleHighlightMode());
-      const clearBtn = btnRow.createEl("button", { text: "\u6E05\u7A7A", cls: "vocab-clear-btn" });
+      const clearBtn = btnRow.createEl("button", { text: t("BTN_CLEAR"), cls: "vocab-clear-btn" });
       clearBtn.addEventListener("click", () => {
         this.plugin.vocabQueue = [];
         this.plugin.updateStatusBar();
@@ -3737,7 +3877,7 @@ var VocabQueueView = class extends import_obsidian.ItemView {
       });
     } else {
       root.createEl("div", {
-        text: this.plugin.highlightMode ? "\u9009\u4E2D\u6587\u5B57\u540E\u6309 Ctrl+Q \u6216\u53F3\u952E\u52A0\u5165\u6E05\u5355" : "\u70B9\u51FB\u5DE6\u4FA7\u4E66\u672C\u56FE\u6807\u8FDB\u5165\u6536\u96C6\u6A21\u5F0F",
+        text: this.plugin.highlightMode ? t("HINT_HOW_TO_COLLECT") : t("HINT_OPEN_NOTE"),
         cls: "vocab-panel-hint"
       });
     }
@@ -3755,7 +3895,7 @@ var VocabQueueView = class extends import_obsidian.ItemView {
       });
       card.createEl("div", { text: item.context, cls: "vocab-card-context" });
       const shortFile = (_a = item.file.split("/").pop()) != null ? _a : item.file;
-      card.createEl("div", { text: `${shortFile}  \u7B2C ${item.line} \u884C`, cls: "vocab-card-source" });
+      card.createEl("div", { text: t("PREVIEW_TITLE", { filename: shortFile, line: item.line }), cls: "vocab-card-source" });
     }
   }
 };
@@ -3772,7 +3912,7 @@ var FullHistoryView = class extends import_obsidian.ItemView {
     return VIEW_TYPE_HISTORY_FULL;
   }
   getDisplayText() {
-    return "\u5B66\u4E60\u5386\u53F2";
+    return t("PANEL_FULL_TITLE");
   }
   getIcon() {
     return "list-checks";
@@ -3793,7 +3933,7 @@ var FullHistoryView = class extends import_obsidian.ItemView {
     const root = this.containerEl.children[1];
     root.empty();
     root.addClass("full-history");
-    root.createEl("h2", { text: "\u5B66\u4E60\u5386\u53F2", cls: "fh-title" });
+    root.createEl("h2", { text: t("PANEL_FULL_TITLE"), cls: "fh-title" });
     const stats = this.plugin.sqlDb.getDailyStats();
     const currentStats = this.plugin.sqlDb.getDailyCurrentStats();
     this._renderHeatmap(root, stats, currentStats);
@@ -3803,10 +3943,10 @@ var FullHistoryView = class extends import_obsidian.ItemView {
     const reds = stats.reduce((s, d) => s + d.red, 0);
     const summaryEl = root.createEl("div", { cls: "fh-summary" });
     const chips = [
-      ["\u5171\u6807\u8BB0", total, "fh-chip-total"],
-      ["\u8212\u9002\u533A", greens, "fh-chip-green"],
-      ["\u5B66\u4E60\u533A", oranges, "fh-chip-orange"],
-      ["\u6050\u614C\u533A", reds, "fh-chip-red"]
+      [t("CHIP_TOTAL"), total, "fh-chip-total"],
+      [t("CHIP_GREEN"), greens, "fh-chip-green"],
+      [t("CHIP_ORANGE"), oranges, "fh-chip-orange"],
+      [t("CHIP_RED"), reds, "fh-chip-red"]
     ];
     for (const [label, count, cls] of chips) {
       const chip = summaryEl.createEl("div", { cls: `fh-chip ${cls}` });
@@ -3817,9 +3957,9 @@ var FullHistoryView = class extends import_obsidian.ItemView {
     const dayEnd = dayStart + 864e5;
     const history = this.plugin.sqlDb.getHistory({ since: dayStart, until: dayEnd, limit: 1e3 });
     const today = localDateStr(new Date());
-    const dateLabel = this.selectedDate === today ? "\u4ECA\u5929" : this.selectedDate;
+    const dateLabel = this.selectedDate === today ? new Date().toLocaleDateString(t("DATE_LOCALE"), { month: "short", day: "numeric" }) : this.selectedDate;
     root.createEl("div", {
-      text: `${dateLabel}  \xB7  \u5171 ${history.length} \u6761`,
+      text: `${dateLabel}  \xB7  ${history.length}`,
       cls: "fh-list-title"
     });
     const allCurrentMarks = this.plugin.sqlDb.getAllCurrentMarks();
@@ -3873,18 +4013,17 @@ var FullHistoryView = class extends import_obsidian.ItemView {
             dotWrap.createEl("span", { cls: "fh-dot fh-dot-cleared" });
           }
         }
-        const lineText = ((_d = lines[entry.line - 1]) != null ? _d : "").trim() || `\u7B2C ${entry.line} \u884C`;
+        const lineText = ((_d = lines[entry.line - 1]) != null ? _d : "").trim() || t("PREVIEW_TITLE", { filename: shortName, line: entry.line });
         row.createEl("span", { text: lineText, cls: "fh-row-loc" });
         const d = new Date(entry.timestamp);
         row.createEl("span", {
-          text: d.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" }),
+          text: d.toLocaleTimeString(t("DATE_LOCALE"), { hour: "2-digit", minute: "2-digit" }),
           cls: "fh-row-time"
         });
         const del = row.createEl("span", { text: "\xD7", cls: "temp-entry-del" });
         del.addEventListener("click", (e) => {
           e.stopPropagation();
-          if (confirm(`\u5220\u9664\u6B64\u8BB0\u5F55\u5E76\u6E05\u9664\u8BE5\u884C\u6807\u8BB0\uFF1F
-${shortName} \xB7 \u7B2C ${entry.line} \u884C`)) {
+          if (confirm(t("CONFIRM_DELETE", { filename: shortName, line: entry.line }))) {
             this.plugin.deleteHistoryEntry(entry.file, entry.line, entry.timestamp);
             this.render();
           }
@@ -3899,8 +4038,8 @@ ${shortName} \xB7 \u7B2C ${entry.line} \u884C`)) {
     var _a, _b, _c;
     const wrap = root.createEl("div", { cls: "fh-heatmap-wrap" });
     const modeBar = wrap.createEl("div", { cls: "fh-heatmap-mode-bar" });
-    const btnCount = modeBar.createEl("button", { text: "\u8BB0\u5F55\u6570\u91CF", cls: "fh-mode-btn" });
-    const btnStatus = modeBar.createEl("button", { text: "\u5F53\u524D\u72B6\u6001", cls: "fh-mode-btn" });
+    const btnCount = modeBar.createEl("button", { text: t("HEATMAP_COUNT"), cls: "fh-mode-btn" });
+    const btnStatus = modeBar.createEl("button", { text: t("HEATMAP_STATUS"), cls: "fh-mode-btn" });
     const setActive = () => {
       btnCount.classList.toggle("fh-mode-btn-active", this.heatmapMode === "count");
       btnStatus.classList.toggle("fh-mode-btn-active", this.heatmapMode === "status");
@@ -3953,7 +4092,7 @@ ${shortName} \xB7 \u7B2C ${entry.line} \u884C`)) {
       if (!firstCell)
         continue;
       const mo = parseInt(firstCell.key.slice(5, 7)) - 1;
-      const label = new Date(parseInt(firstCell.key.slice(0, 4)), mo, 1).toLocaleDateString("zh-CN", { month: "short" });
+      const label = new Date(parseInt(firstCell.key.slice(0, 4)), mo, 1).toLocaleDateString(t("DATE_LOCALE"), { month: "short" });
       const last = monthGroups[monthGroups.length - 1];
       if (last && last.label === label)
         last.weeks.push(w);
