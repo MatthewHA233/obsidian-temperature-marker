@@ -345,6 +345,7 @@ export default class TemperatureMarkerPlugin extends Plugin {
   public highlightMode = false;
   public vocabQueue: VocabItem[] = [];
   private statusBarEl: HTMLElement | null = null;
+  private _remapTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
   // Obsidian hover preview 需要 hoverParent 有此属性
   hoverPopover: any = null;
@@ -378,6 +379,15 @@ export default class TemperatureMarkerPlugin extends Plugin {
           const active = this.app.workspace.getActiveFile();
           if (active) this._dispatchNoteVocabTerms(active.path);
         }
+      }),
+    );
+
+    // 监听文件修改，防抖后用相似度重映射行号
+    this.registerEvent(
+      this.app.vault.on('modify', (file) => {
+        if (!(file instanceof TFile) || file.extension !== 'md') return;
+        if (this.sqlDb.getFileMarks(file.path).size === 0) return;
+        this._scheduleRemap(file.path);
       }),
     );
 
@@ -472,6 +482,10 @@ export default class TemperatureMarkerPlugin extends Plugin {
       else console.warn('[TempMarker] restoreMarks: EditorView not found', filePath);
       return;
     }
+    // 补充旧标记的 content（迁移场景：旧数据无 content，打开时顺手填上）
+    const lines = view.state.doc.toString().split('\n');
+    this.sqlDb.populateMarkContent(filePath, lines);
+
     const map = this.sqlDb.getFileMarks(filePath);
     view.dispatch({ effects: restoreTemps.of(map) });
     // 编辑器可能在首次 dispatch 后继续初始化并重置状态，300ms 后补发一次保险
@@ -491,9 +505,34 @@ export default class TemperatureMarkerPlugin extends Plugin {
     return v?.editor?.cm ?? v?.editMode?.editor?.cm ?? v?.sourceMode?.cmEditor?.cm ?? null;
   }
 
+  // ── 文件修改后防抖重映射行号 ──
+  private _scheduleRemap(filePath: string) {
+    const existing = this._remapTimers.get(filePath);
+    if (existing) clearTimeout(existing);
+    const timer = setTimeout(async () => {
+      this._remapTimers.delete(filePath);
+      const tfile = this.app.vault.getAbstractFileByPath(filePath);
+      if (!(tfile instanceof TFile)) return;
+      const content = await this.app.vault.read(tfile);
+      const lines   = content.split('\n');
+      const changed = this.sqlDb.remapFileMarks(filePath, lines);
+      if (changed) {
+        this.restoreMarks(filePath);
+        this.refreshHistoryPanel();
+      }
+    }, 1500);
+    this._remapTimers.set(filePath, timer);
+  }
+
   // ── 保存一次标记变更 ──
   saveMark(filePath: string, line: number, temp: Temperature | null) {
-    this.sqlDb.setMark(filePath, line, temp);
+    // 读取当前行文本，作为相似度重映射的锚点
+    let content: string | undefined;
+    const view = this.getEditorView(filePath);
+    if (view && line >= 1 && line <= view.state.doc.lines) {
+      content = view.state.doc.line(line).text.trim();
+    }
+    this.sqlDb.setMark(filePath, line, temp, content);
     if (temp !== null) this.sqlDb.addHistory(filePath, line, temp, Date.now());
     this.refreshHistoryPanel();
   }

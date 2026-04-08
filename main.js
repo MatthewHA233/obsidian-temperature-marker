@@ -2413,11 +2413,31 @@ var import_obsidian = require("obsidian");
 // database.ts
 var fs = __toESM(require("fs"));
 var path = __toESM(require("path"));
+function similarity(a, b) {
+  if (a === b)
+    return 1;
+  if (!a || !b)
+    return 0;
+  const la = a.length, lb = b.length;
+  const sa = a.slice(0, 300), sb = b.slice(0, 300);
+  const row = Array.from({ length: sb.length + 1 }, (_, i) => i);
+  for (let i = 1; i <= sa.length; i++) {
+    let prev = i;
+    for (let j = 1; j <= sb.length; j++) {
+      const val = sa[i - 1] === sb[j - 1] ? row[j - 1] : 1 + Math.min(prev, row[j], row[j - 1]);
+      row[j - 1] = prev;
+      prev = val;
+    }
+    row[sb.length] = prev;
+  }
+  return 1 - row[sb.length] / Math.max(la, lb);
+}
 var MAIN_SCHEMA = `
   CREATE TABLE IF NOT EXISTS marks (
     file    TEXT    NOT NULL,
     line    INTEGER NOT NULL,
     color   TEXT    NOT NULL,
+    content TEXT,
     PRIMARY KEY (file, line)
   );
   CREATE TABLE IF NOT EXISTS note_vocab (
@@ -2469,6 +2489,12 @@ var DatabaseManager = class {
       db = new this.SQL.Database();
     }
     db.run(schema);
+    if (filename === "temp-main.db") {
+      try {
+        db.run("ALTER TABLE marks ADD COLUMN content TEXT");
+      } catch (e) {
+      }
+    }
     return db;
   }
   _ensureHistoryDb(year) {
@@ -2508,16 +2534,93 @@ var DatabaseManager = class {
     stmt.free();
     return result;
   }
-  setMark(file, line, color) {
+  setMark(file, line, color, content) {
     if (color === null) {
       this.mainDb.run("DELETE FROM marks WHERE file = ? AND line = ?", [file, line]);
     } else {
       this.mainDb.run(
-        "INSERT OR REPLACE INTO marks (file, line, color) VALUES (?, ?, ?)",
-        [file, line, color]
+        "INSERT OR REPLACE INTO marks (file, line, color, content) VALUES (?, ?, ?, ?)",
+        [file, line, color, content != null ? content : null]
       );
     }
     this.mainDirty = true;
+  }
+  /**
+   * 为尚未存储 content 的 marks 补充行内容。
+   * 在 file-open 时调用，确保旧标记也能参与后续的相似度重映射。
+   */
+  populateMarkContent(file, lines) {
+    var _a;
+    const stmt = this.mainDb.prepare(
+      'SELECT line FROM marks WHERE file = ? AND (content IS NULL OR content = "")'
+    );
+    stmt.bind([file]);
+    const toUpdate = [];
+    while (stmt.step())
+      toUpdate.push(stmt.getAsObject().line);
+    stmt.free();
+    if (toUpdate.length === 0)
+      return;
+    for (const lineNum of toUpdate) {
+      const text = ((_a = lines[lineNum - 1]) != null ? _a : "").trim();
+      this.mainDb.run(
+        "UPDATE marks SET content = ? WHERE file = ? AND line = ?",
+        [text, file, lineNum]
+      );
+    }
+    this.mainDirty = true;
+  }
+  /**
+   * 文件内容变更时，用相似度匹配把 marks 的行号重映射到新位置。
+   * 返回是否有任何标记发生了移动。
+   */
+  remapFileMarks(file, lines) {
+    var _a;
+    const stmt = this.mainDb.prepare(
+      'SELECT line, color, content FROM marks WHERE file = ? AND content IS NOT NULL AND content != ""'
+    );
+    stmt.bind([file]);
+    const marks = [];
+    while (stmt.step()) {
+      const r = stmt.getAsObject();
+      marks.push({ line: r.line, color: r.color, content: r.content });
+    }
+    stmt.free();
+    if (marks.length === 0)
+      return false;
+    const WINDOW = 30;
+    const THRESHOLD = 0.6;
+    let anyChanged = false;
+    for (const mark of marks) {
+      const stored = mark.content.trim();
+      const curText = ((_a = lines[mark.line - 1]) != null ? _a : "").trim();
+      if (similarity(stored, curText) >= THRESHOLD)
+        continue;
+      let bestLine = -1;
+      let bestSim = THRESHOLD;
+      const lo = Math.max(0, mark.line - 1 - WINDOW);
+      const hi = Math.min(lines.length - 1, mark.line - 1 + WINDOW);
+      for (let i = lo; i <= hi; i++) {
+        if (i === mark.line - 1)
+          continue;
+        const sim = similarity(stored, lines[i].trim());
+        if (sim > bestSim) {
+          bestSim = sim;
+          bestLine = i + 1;
+        }
+      }
+      if (bestLine !== -1) {
+        this.mainDb.run("DELETE FROM marks WHERE file = ? AND line = ?", [file, mark.line]);
+        this.mainDb.run(
+          "INSERT OR REPLACE INTO marks (file, line, color, content) VALUES (?, ?, ?, ?)",
+          [file, bestLine, mark.color, mark.content]
+        );
+        anyChanged = true;
+      }
+    }
+    if (anyChanged)
+      this.mainDirty = true;
+    return anyChanged;
   }
   // ── 历史记录 ────────────────────────────────────────────────
   addHistory(file, line, color, timestamp) {
@@ -3121,6 +3224,7 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
     this.highlightMode = false;
     this.vocabQueue = [];
     this.statusBarEl = null;
+    this._remapTimers = /* @__PURE__ */ new Map();
     // Obsidian hover preview 需要 hoverParent 有此属性
     this.hoverPopover = null;
     // 词条悬浮预览 tooltip
@@ -3149,6 +3253,15 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
           if (active)
             this._dispatchNoteVocabTerms(active.path);
         }
+      })
+    );
+    this.registerEvent(
+      this.app.vault.on("modify", (file) => {
+        if (!(file instanceof import_obsidian.TFile) || file.extension !== "md")
+          return;
+        if (this.sqlDb.getFileMarks(file.path).size === 0)
+          return;
+        this._scheduleRemap(file.path);
       })
     );
     this.registerView(VIEW_TYPE_HISTORY_FULL, (leaf) => new FullHistoryView(leaf, this));
@@ -3223,6 +3336,8 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
         console.warn("[TempMarker] restoreMarks: EditorView not found", filePath);
       return;
     }
+    const lines = view.state.doc.toString().split("\n");
+    this.sqlDb.populateMarkContent(filePath, lines);
     const map = this.sqlDb.getFileMarks(filePath);
     view.dispatch({ effects: restoreTemps.of(map) });
     if (attempt === 0)
@@ -3244,9 +3359,34 @@ var TemperatureMarkerPlugin = class extends import_obsidian.Plugin {
     const v = target.view;
     return (_i = (_h = (_e = (_b = v == null ? void 0 : v.editor) == null ? void 0 : _b.cm) != null ? _e : (_d = (_c = v == null ? void 0 : v.editMode) == null ? void 0 : _c.editor) == null ? void 0 : _d.cm) != null ? _h : (_g = (_f = v == null ? void 0 : v.sourceMode) == null ? void 0 : _f.cmEditor) == null ? void 0 : _g.cm) != null ? _i : null;
   }
+  // ── 文件修改后防抖重映射行号 ──
+  _scheduleRemap(filePath) {
+    const existing = this._remapTimers.get(filePath);
+    if (existing)
+      clearTimeout(existing);
+    const timer = setTimeout(async () => {
+      this._remapTimers.delete(filePath);
+      const tfile = this.app.vault.getAbstractFileByPath(filePath);
+      if (!(tfile instanceof import_obsidian.TFile))
+        return;
+      const content = await this.app.vault.read(tfile);
+      const lines = content.split("\n");
+      const changed = this.sqlDb.remapFileMarks(filePath, lines);
+      if (changed) {
+        this.restoreMarks(filePath);
+        this.refreshHistoryPanel();
+      }
+    }, 1500);
+    this._remapTimers.set(filePath, timer);
+  }
   // ── 保存一次标记变更 ──
   saveMark(filePath, line, temp) {
-    this.sqlDb.setMark(filePath, line, temp);
+    let content;
+    const view = this.getEditorView(filePath);
+    if (view && line >= 1 && line <= view.state.doc.lines) {
+      content = view.state.doc.line(line).text.trim();
+    }
+    this.sqlDb.setMark(filePath, line, temp, content);
     if (temp !== null)
       this.sqlDb.addHistory(filePath, line, temp, Date.now());
     this.refreshHistoryPanel();
